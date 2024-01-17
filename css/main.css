@@ -1,0 +1,20 @@
+body {
+    background-color: #fffdd0;
+}
+.column {
+    width: 20vw;
+    height: 85vh;
+    border-radius: 15px;
+    background-color: lightgrey;
+    padding: 15px;
+}
+.card {
+    height: 17%;
+}
+#app {
+    display: flex;
+    gap: 5em;
+    padding-top: 10px;
+    justify-content: center;
+    margin: 0;
+}
