@@ -24,6 +24,7 @@ Vue.component('column', {
             <add-card 
                 v-if="canAdd" 
                 @add-card-submitted="addToColumn"
+                :isDisplayForm="isDisplayForForm"
             ></add-card>
         </div>
     `,
@@ -62,6 +63,11 @@ Vue.component('column', {
             }
         }
     },
+    computed: {
+        isDisplayForForm() {
+            return this.addTask.length < 3
+        }
+    }
 })
 
 Vue.component('card', {
@@ -116,8 +122,14 @@ Vue.component('card', {
 })
 
 Vue.component('add-card', {
+    props: {
+        isDisplayForm: {
+            type: Boolean,
+            required: true
+        }
+    },
     template: `
-        <form @submit.prevent="onSubmit" class="createTask">
+        <form @submit.prevent="onSubmit" class="createTask" v-show="isDisplayForm">
             <input type="text" maxlength=50 required v-model="title" class="inputFortitle" />
             <div class="poinsContainer">
                 <div>
@@ -161,7 +173,7 @@ Vue.component('add-card', {
                 this.thirdPoint = null
             }
         },
-    }
+    },
 })
 
 let app = new Vue({
