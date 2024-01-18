@@ -2,14 +2,41 @@ Vue.component('column', {
     props: {
         tasks: {
             type: Array,
-            required: true
+            required: false,
+        },
+        canAdd: {
+            type: Boolean,
+            required: true,
+        },
+        addTask: {
+            type: Array,
+            required: false,
         }
     }, 
+    data() {
+        return {
+            colToAdd: this.addTask
+        }
+    },
     template: `
         <div class="column">
-            <card v-for="task in tasks" :key="task.id" :task="task"></card>
+            <card v-for="task in tasks" :key="task.id" :task="task">></card>
+            <add-card v-if="canAdd" @add-card-submitted="addToColumn"></add-card>
         </div>
-    `
+    `,
+    methods: {
+        addToColumn(cardName) {
+            if (this.colToAdd.length < 3) {
+                this.colToAdd.push(
+                    {
+                        id: 3,
+                        title: cardName,
+                        list: [],
+                    },
+                )
+            }
+        }
+    },
 })
 
 Vue.component('card', {
@@ -30,96 +57,48 @@ Vue.component('card', {
     `
 })
 
+Vue.component('add-card', {
+    template: `
+        <form @submit.prevent="onSubmit">
+            <input type="text" maxlength=50 v-model="title" />
+            <input type="submit" value="Добавить" />
+        </form>
+    `,
+    data() {
+        return {
+            title: null,
+        }
+    },
+    methods: {
+        onSubmit() {
+            this.$emit('add-card-submitted', this.title)
+        },
+    }
+})
+
 let app = new Vue({
     el: '#app',
 
-    data: {
-        tasksOfFirst: [
-            {
-                id: 1,
-                title: 'Домашка',
-                list: [
-                    'Русский язык',
-                    'Алгебра',
-                    'Биология',
-                ],
-            },
-            {
-                id: 2,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            },
-            {
-                id: 3,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            }
-        ],
-        tasksOfSecond: [
-            {
-                id: 4,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            },
-            {
-                id: 5,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            },
-            {
-                id: 6,
-                title: 'Домашка',
-                list: [
-                    'Русский язык',
-                    'Алгебра',
-                    'Биология',
-                ],
-            },
-        ],
-        tasksOfThird: [
-            {
-                id: 7,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            },
-            {
-                id: 8,
-                title: 'Домашка',
-                list: [
-                    'Русский язык',
-                    'Алгебра',
-                    'Биология',
-                ],
-            },
-            {
-                id: 9,
-                title: 'TITLE',
-                list: [
-                    'task1',
-                    'task2',
-                    'task3',
-                ],
-            }
-        ],
-    }
+    data() {
+        return {
+            addInFirstColumn: true,
+            addInSecondColumn: false,
+            addInThirdColumn: false,
+            ID: 0,
+            tasksOfFirst: [
+                {
+                    id: 0,
+                    title: 'Домашка',
+                    list: [
+                        'Русский язык',
+                        'Алгебра',
+                        'Биология',
+                    ],
+                },
+            ],
+            tasksOfSecond: [],
+            tasksOfThird: [],
+        }
+    },
 });
+

@@ -10,9 +10,23 @@
 </head>
 <body>
     <div id="app">
-        <column :tasks="tasksOfFirst"></column>
-        <column :tasks="tasksOfSecond"></column>
-        <column :tasks="tasksOfThird"></column>
+
+        <column 
+            :tasks="tasksOfFirst" 
+            :add-task="tasksOfFirst"
+            :can-add="addInFirstColumn"
+        ></column>
+
+        <column 
+            :tasks="tasksOfSecond" 
+            :can-add="addInSecondColumn"
+        ></column>
+
+        <column 
+            :tasks="tasksOfThird" 
+            :can-add="addInThirdColumn"
+        ></column>
+
     </div>
 </body>
 </html>
