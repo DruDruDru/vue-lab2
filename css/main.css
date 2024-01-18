@@ -18,3 +18,19 @@ body {
     justify-content: center;
     margin: 0;
 }
+.poinsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.createTask {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.titleContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
