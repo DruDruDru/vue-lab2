@@ -111,6 +111,7 @@ Vue.component('card', {
                     :id="point.name" 
                     :name="point.name" 
                     class="checkboxInput"
+                    v-model="point.checked"
                     @change="onCheckbox(point)" 
                 />
                 <label :for="point.name">{{ point.name }}</label>
@@ -249,8 +250,8 @@ let app = new Vue({
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: false },
-                    { name: 'Алгебра', checked: false },
-                    { name: 'Биология', checked : false }
+                    { name: 'Алгебра', checked: true },
+                    { name: 'Биология', checked : true }
                 ],
             },
             {
@@ -258,8 +259,8 @@ let app = new Vue({
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: false },
-                    { name: 'Алгебра', checked: false },
-                    { name: 'Биология', checked : false }
+                    { name: 'Алгебра', checked: true },
+                    { name: 'Биология', checked : true }
                 ],
             }
         ],
