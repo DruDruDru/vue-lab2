@@ -9,7 +9,7 @@ body {
     padding: 15px;
 }
 .card {
-    height: 17%;
+    height: 150px;
 }
 #app {
     display: flex;
@@ -27,6 +27,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    margin-top: 50px;
 }
 .titleContainer {
     display: flex;

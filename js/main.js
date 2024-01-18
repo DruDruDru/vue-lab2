@@ -15,12 +15,16 @@ Vue.component('column', {
     },
     template: `
         <div class="column">
-            <card v-for="task in tasks" :key="task.id" :task="task">></card>
-            <!--<add-card 
+            <card 
+                v-for="task in tasks" 
+                :key="task.id" 
+                :task="task"
+                @add-point-submitted="addToTask"
+            ></card>
+            <add-card 
                 v-if="canAdd" 
                 @add-card-submitted="addToColumn"
-                @add-point-submitted=""
-            ></add-card>-->
+            ></add-card>
         </div>
     `,
     data() {
@@ -38,14 +42,24 @@ Vue.component('column', {
                         list: [
                             { name: task.firstPoint, checked: false },
                             { name: task.secondPoint, checked: false },
-                            { name: task.thirdPoint, checked : false }
+                            { name: task.thirdPoint, checked: false }
                         ],
                     },
                 )
             }
         },
-        addToTask(point) {
-            console.log(point);
+        addToTask(obj) {
+            let iter = 0;
+            for (task of this.addTask) {
+                if (obj.id === task.id) {
+                    if (this.addTask[iter].list.length < 5 ) {
+                        this.addTask[iter].list.push(
+                            { name: obj.point, checked: false }
+                        )
+                    }
+                }
+                iter++;
+            }
         }
     },
 })
@@ -67,26 +81,35 @@ Vue.component('card', {
         <div class="card">
             <div class="titleContainer">
                 <h2>{{ task.title }}</h2>
-                <button @click="onAddPoint" >+</button>
+                <button type="button" @click="isClick" :disabled="isDisabled" >+</button>
             </div>
             
             <div v-for="point in task.list">
                 <input type="checkbox" id="..." name="..." value="..."/>
                 <label for="...">{{ point.name }}</label>
             </div>
-            <form @submit.prevent="onAddPoint" v-show="click" >
-                <input type="text" v-model="point" />
-                <input type="submit" value="Добавить">
+
+            <form @submit.prevent="onAddPoint(task.id)" v-show="click" >
+                <input type="text" required v-model="point" />
+                <input type="submit" value="Добавить" />
             </form>
         </div>
     `,
+    computed: {
+        isDisabled() {
+            return this.task.list.length >= 5;
+        }
+    },
     methods: {
-        onAddPoint() {
+        isClick() {
+            this.click = true;
+        },
+        onAddPoint(cardId) {
             this.click = true
-            this.point = point;
             if (this.point) {
-                this.$emit('add-point-submitted', this.point);
+                this.$emit('add-point-submitted', {id: cardId, point: this.point});
                 this.point = null;
+                this.click = false
             }
         },
     }
@@ -95,7 +118,7 @@ Vue.component('card', {
 Vue.component('add-card', {
     template: `
         <form @submit.prevent="onSubmit" class="createTask">
-            <input type="text" maxlength=50 required v-model="title" class="inputFortitle" />\
+            <input type="text" maxlength=50 required v-model="title" class="inputFortitle" />
             <div class="poinsContainer">
                 <div>
                     <span>1.</span>
@@ -159,6 +182,15 @@ let app = new Vue({
                         { name: 'Биология', checked : false }
                     ],
                 },
+                {
+                    id: 2,
+                    title: 'Домашка',
+                    list: [
+                        { name: 'Русский язык', checked: false },
+                        { name: 'Алгебра', checked: false },
+                        { name: 'Биология', checked : false }
+                    ],
+                }
             ],
             tasksOfSecond: [],
             tasksOfThird: [],
