@@ -12,11 +12,6 @@ Vue.component('column', {
             type: Array,
             required: false,
         }
-    }, 
-    data() {
-        return {
-            colToAdd: this.addTask
-        }
     },
     template: `
         <div class="column">
@@ -24,17 +19,23 @@ Vue.component('column', {
             <add-card v-if="canAdd" @add-card-submitted="addToColumn"></add-card>
         </div>
     `,
+    data() {
+        return {
+            ID: 0,
+        }
+    },
     methods: {
         addToColumn(cardName) {
-            if (this.colToAdd.length < 3) {
-                this.colToAdd.push(
+            if (this.addTask.length < 3) {
+                this.addTask.push(
                     {
-                        id: 3,
+                        id: ++this.ID,
                         title: cardName,
                         list: [],
                     },
                 )
             }
+            console.log(this.addTask);
         }
     },
 })
@@ -84,7 +85,6 @@ let app = new Vue({
             addInFirstColumn: true,
             addInSecondColumn: false,
             addInThirdColumn: false,
-            ID: 0,
             tasksOfFirst: [
                 {
                     id: 0,
