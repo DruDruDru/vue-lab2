@@ -3,13 +3,13 @@ body {
 }
 .column {
     width: 20vw;
-    height: 85vh;
+    height: 100%;
     border-radius: 15px;
     background-color: lightgrey;
     padding: 15px;
 }
 .card {
-    height: 150px;
+    height: 175px;
 }
 #app {
     display: flex;

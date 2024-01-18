@@ -12,19 +12,19 @@
     <div id="app">
 
         <column 
-            :tasks="tasksOfFirst" 
-            :add-task="tasksOfFirst"
-            :can-add="addInFirstColumn"
+            :tasks="this.tasksOfFirst" 
+            :add-task="this.tasksOfFirst"
+            :can-add="this.addInFirstColumn"
         ></column>
 
         <column 
-            :tasks="tasksOfSecond" 
-            :can-add="addInSecondColumn"
+            :tasks="this.tasksOfSecond" 
+            :can-add="this.addInSecondColumn"
         ></column>
 
         <column 
-            :tasks="tasksOfThird" 
-            :can-add="addInThirdColumn"
+            :tasks="this.tasksOfThird" 
+            :can-add="this.addInThirdColumn"
         ></column>
 
     </div>
