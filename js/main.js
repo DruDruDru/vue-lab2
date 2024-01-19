@@ -15,14 +15,20 @@ Vue.component('column', {
             type: Array,
             required: false,
         },
+        date: {
+            type: String,
+            required: false,
+        }
     },
     template: `
         <div class="column">
+            <div id="divBlock" v-if="isFirst" style="display: none"></div>
             <card 
                 v-for="task in tasks" 
                 :key="task.id"
                 :task="task"
                 :first-column="addTask"
+                :date="date"
                 @add-point-submitted="addToTask"
                 @on-check="moveToSecond"
             ></card>
@@ -35,7 +41,7 @@ Vue.component('column', {
     `,
     data() {
         return {
-            ID: 0,
+            ID: 4,
         }
     },
     methods: {
@@ -76,6 +82,9 @@ Vue.component('column', {
         }
     },
     computed: {
+        isFirst() {
+            return this.addTask;
+        },
         isDisplayForForm() {
             return this.addTask.length < 3
         },
@@ -87,6 +96,10 @@ Vue.component('card', {
         task: {
             type: Object,
             required: true
+        },
+        date: {
+            type: String,
+            required: false,
         },
         firstColumn: {
             type: Array,
@@ -122,7 +135,6 @@ Vue.component('card', {
                 />
                 <label :for="point.name">{{ point.name }}</label>
             </div>
-
             <form @submit.prevent="onAddPoint(task.id)" v-show="click" >
                 <input type="text" required v-model="point" />
                 <input type="submit" value="Добавить" />
@@ -132,6 +144,7 @@ Vue.component('card', {
     
     methods: {
         isClick() {
+            if (this.click === true) this.click = false;
             this.click = true;
         },
         onAddPoint(cardId) {
@@ -143,9 +156,6 @@ Vue.component('card', {
             }
         },
         onCheckbox(point) {
-
-            checkboxes = document.querySelectorAll('.checkboxInput')
-
             count = 0;
             for (point of this.task.list) {
                 if (point.checked) count++;
@@ -162,10 +172,6 @@ Vue.component('card', {
         isFirstColumn() {
             return this.firstColumn;
         },
-        date() {
-            cd = new Date()
-            return 'Дата: ' + cd.getDate() + '.' + (String(cd.getMonth())+1) + '.' + cd.getFullYear() + ' Время: ' + cd.getHours() + ':' + cd.getMinutes()
-        }
     },
 })
 
@@ -245,7 +251,7 @@ let app = new Vue({
                 ],
             },
             {
-                id: 2,
+                id: 1,
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: false },
@@ -256,7 +262,7 @@ let app = new Vue({
         ],
         tasksOfSecond: [
             {
-                id: 3,
+                id: 2,
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: false },
@@ -265,7 +271,7 @@ let app = new Vue({
                 ],
             },
             {
-                id: 4,
+                id: 3,
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: false },
@@ -276,7 +282,7 @@ let app = new Vue({
         ],
         tasksOfThird: [
             {
-                id: 5,
+                id: 4,
                 title: 'Домашка',
                 list: [
                     { name: 'Русский язык', checked: true },
@@ -292,14 +298,45 @@ let app = new Vue({
                 const idx = this.tasksOfFirst.indexOf(task)
                 this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
                 this.tasksOfSecond.push(task)
+            } else if (this.tasksOfSecond.length === 5) {
+                document.getElementById('divBlock').style.display = "block";
+                
             }
         },
         handleOnCheck100(task) {
             if (this.tasksOfSecond.includes(task)) {
+                let flag = false;
+                if (this.tasksOfSecond.length === 5) {
+                    document.getElementById('divBlock').style.display = "none";
+                    flag = true;
+                }
                 const idx = this.tasksOfSecond.indexOf(task)
                 this.tasksOfSecond = this.tasksOfSecond.filter((value, index) => idx !== index)
                 this.tasksOfThird.push(task)
+
+                if (flag) {
+                    for (problem of this.tasksOfFirst) {
+                        count = 0;
+                        for (point of problem.list) {
+                            if (point.checked) count++;
+                        }
+                        let percents = 100 / problem.list.length * count
+                        if (percents >= 50 && percents < 100) {
+    
+                            const idx = this.tasksOfFirst.indexOf(problem)
+                            this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
+                            this.tasksOfSecond.push(problem)
+    
+                        } 
+                    }
+                }
             }
+        }
+    },
+    computed: {
+        date() {
+            return 'Дата: ' + new Date().getDate() + '.' +
+            (String(new Date().getMonth())+1) + '.' + new Date().getFullYear() + ' Время: ' + new Date().getHours() + ':' + new Date().getMinutes()
         }
     },
     created() {
