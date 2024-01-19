@@ -42,18 +42,23 @@ Vue.component('column', {
     methods: {
         addToColumn(task) {
             if (this.addTask.length < 3) {
-                this.addTask.push(
-                    {
-                        id: ++this.ID,
-                        title: task.title,
-                        list: [
-                            { name: task.firstPoint, checked: false },
-                            { name: task.secondPoint, checked: false },
-                            { name: task.thirdPoint, checked: false }
-                        ],
-                    },
-                )
+                let temp = {
+                    id: ++this.ID,
+                    title: task.title,
+                    list: [
+                        { name: task.firstPoint, checked: false },
+                        { name: task.secondPoint, checked: false },
+                        { name: task.thirdPoint, checked: false }
+                    ],
+                    date: null,
+                }
+                this.addTask.push(temp)
+
+                localStorage.setItem('ID', JSON.stringify(this.ID))
+                const ID = localStorage.getItem('ID');
+                if (ID) this.ID = JSON.parse(ID);
             }
+
         },
         addToTask(obj) {
             let iter = 0;
@@ -67,7 +72,6 @@ Vue.component('column', {
                 }
                 iter++;
             }
-            console.log(this.addTask);
         },
         moveToSecond(task) {
             eventBus50.$emit('on-check', task)
@@ -75,6 +79,11 @@ Vue.component('column', {
         moveToThird(task) {
             eventBus100.$emit('on-check', task)
         }
+    },
+    mounted() {
+        localStorage.setItem('ID', JSON.stringify(this.ID))
+        const ID = localStorage.getItem('ID');
+        if (ID) this.ID = JSON.parse(ID);
     },
     computed: {
         isFirst() {
@@ -127,7 +136,7 @@ Vue.component('card', {
                 <label :for="point.name">{{ point.name }}</label>
             </div> 
             <div class="date-block">
-                {{ String(new Date()) }}
+                {{ this.task.date }}
             </div>
             <form @submit.prevent="onAddPoint(task.id)" v-show="click" >
                 <input type="text" required v-model="point" />
@@ -231,6 +240,7 @@ let app = new Vue({
         addInFirstColumn: true,
         addInSecondColumn: false,
         addInThirdColumn: false,
+        blockedDiv: null,
         tasksOfFirst: [
             {
                 id: 0,
@@ -240,6 +250,7 @@ let app = new Vue({
                     { name: 'Алгебра', checked: false },
                     { name: 'Биология', checked : false }
                 ],
+                date: null
             },
             {
                 id: 1,
@@ -249,6 +260,7 @@ let app = new Vue({
                     { name: 'Алгебра', checked: false },
                     { name: 'Биология', checked : false }
                 ],
+                date: null
             }
         ],
         tasksOfSecond: [
@@ -260,6 +272,7 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
+                date: null
             },
             {
                 id: 3,
@@ -269,6 +282,7 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
+                date: null
             }
         ],
         tasksOfThird: [
@@ -280,15 +294,10 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
+                date: new Date().toDateString() + ' --- ' + new Date().toTimeString()
             }
         ],
     },
-    saveData() {
-        localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
-        localStorage.setItem('tasksOfSecond', JSON.stringify(this.tasksOfSecond))
-        localStorage.setItem('tasksOfThird', JSON.stringify(this.tasksOfThird))
-    },
-
     methods: {
         handleOnCheck50(task) {
             if (this.tasksOfFirst.includes(task) && !(this.tasksOfSecond.includes(task)) && (this.tasksOfSecond.length < 5)) {
@@ -297,19 +306,29 @@ let app = new Vue({
                 this.tasksOfSecond.push(task)
                 console.log(this.tasksOfFirst);
             } else if (this.tasksOfSecond.length === 5) {
-                document.getElementById('divBlock').style.display = "block";
-                
+                document.getElementById('divBlock').style.display = 'block';
             }
+            localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
+            localStorage.setItem('tasksOfSecond', JSON.stringify(this.tasksOfSecond))
+            localStorage.setItem('tasksOfThird', JSON.stringify(this.tasksOfThird))
+            const tasksOfFirst = localStorage.getItem('tasksOfFirst');
+            const tasksOfSecond = localStorage.getItem('tasksOfSecond');
+            const tasksOfThird = localStorage.getItem('tasksOfThird');
+
+            if (tasksOfFirst) this.tasksOfFirst = JSON.parse(tasksOfFirst);
+            if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
+            if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
         },
         handleOnCheck100(task) {
             if (this.tasksOfSecond.includes(task)) {
                 let flag = false;
                 if (this.tasksOfSecond.length === 5) {
-                    document.getElementById('divBlock').style.display = "none";
+                    document.getElementById('divBlock').style.display = 'none';
                     flag = true;
                 }
                 const idx = this.tasksOfSecond.indexOf(task)
                 this.tasksOfSecond = this.tasksOfSecond.filter((value, index) => idx !== index)
+                task.date = new Date().toDateString() + ' --- ' + new Date().toTimeString()
                 this.tasksOfThird.push(task)
 
                 if (flag) {
@@ -323,15 +342,34 @@ let app = new Vue({
     
                             const idx = this.tasksOfFirst.indexOf(problem)
                             this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
+                            problem.date = new Date().toDateString() + ' --- ' + new Date().toTimeString()
                             this.tasksOfSecond.push(problem)
-    
                         } 
                     }
                 }
             }
+            localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
+            localStorage.setItem('tasksOfSecond', JSON.stringify(this.tasksOfSecond))
+            localStorage.setItem('tasksOfThird', JSON.stringify(this.tasksOfThird))
+            const tasksOfFirst = localStorage.getItem('tasksOfFirst');
+            const tasksOfSecond = localStorage.getItem('tasksOfSecond');
+            const tasksOfThird = localStorage.getItem('tasksOfThird');
+
+            if (tasksOfFirst) this.tasksOfFirst = JSON.parse(tasksOfFirst);
+            if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
+            if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
         }
     },
-    created() {
+    mounted() {
+
+        const tasksOfFirst = localStorage.getItem('tasksOfFirst');
+        const tasksOfSecond = localStorage.getItem('tasksOfSecond');
+        const tasksOfThird = localStorage.getItem('tasksOfThird');
+
+        if (tasksOfFirst) this.tasksOfFirst = JSON.parse(tasksOfFirst);
+        if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
+        if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
+
         eventBus50.$on('on-check', this.handleOnCheck50),
         eventBus100.$on('on-check', this.handleOnCheck100)
     }
