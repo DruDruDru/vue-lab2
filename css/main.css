@@ -47,3 +47,7 @@ body {
     inset: 0;
     z-index: 5;
 }
+#firstColumn .date-block,
+#secondColumn .date-block {
+    display: none;
+}

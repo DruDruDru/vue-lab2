@@ -15,10 +15,6 @@ Vue.component('column', {
             type: Array,
             required: false,
         },
-        date: {
-            type: String,
-            required: false,
-        }
     },
     template: `
         <div class="column">
@@ -28,7 +24,6 @@ Vue.component('column', {
                 :key="task.id"
                 :task="task"
                 :first-column="addTask"
-                :date="date"
                 @add-point-submitted="addToTask"
                 @on-check="moveToSecond"
             ></card>
@@ -97,10 +92,6 @@ Vue.component('card', {
             type: Object,
             required: true
         },
-        date: {
-            type: String,
-            required: false,
-        },
         firstColumn: {
             type: Array,
             required: false,
@@ -134,6 +125,9 @@ Vue.component('card', {
                     @change="onCheckbox(point)"
                 />
                 <label :for="point.name">{{ point.name }}</label>
+            </div> 
+            <div class="date-block">
+                {{ String(new Date()) }}
             </div>
             <form @submit.prevent="onAddPoint(task.id)" v-show="click" >
                 <input type="text" required v-model="point" />
@@ -172,6 +166,7 @@ Vue.component('card', {
         isFirstColumn() {
             return this.firstColumn;
         },
+
     },
 })
 
@@ -331,12 +326,6 @@ let app = new Vue({
                     }
                 }
             }
-        }
-    },
-    computed: {
-        date() {
-            return 'Дата: ' + new Date().getDate() + '.' +
-            (String(new Date().getMonth())+1) + '.' + new Date().getFullYear() + ' Время: ' + new Date().getHours() + ':' + new Date().getMinutes()
         }
     },
     created() {
