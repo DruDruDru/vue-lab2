@@ -135,7 +135,6 @@ Vue.component('card', {
             </form>
         </div>
     `,
-    
     methods: {
         isClick() {
             if (this.click === true) this.click = false;
@@ -232,9 +231,6 @@ let app = new Vue({
         addInFirstColumn: true,
         addInSecondColumn: false,
         addInThirdColumn: false,
-        editFirstColumn: true,
-        editSecondColumn: false,
-        editThirdColumn: false,
         tasksOfFirst: [
             {
                 id: 0,
@@ -287,12 +283,19 @@ let app = new Vue({
             }
         ],
     },
+    saveData() {
+        localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
+        localStorage.setItem('tasksOfSecond', JSON.stringify(this.tasksOfSecond))
+        localStorage.setItem('tasksOfThird', JSON.stringify(this.tasksOfThird))
+    },
+
     methods: {
         handleOnCheck50(task) {
             if (this.tasksOfFirst.includes(task) && !(this.tasksOfSecond.includes(task)) && (this.tasksOfSecond.length < 5)) {
                 const idx = this.tasksOfFirst.indexOf(task)
                 this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
                 this.tasksOfSecond.push(task)
+                console.log(this.tasksOfFirst);
             } else if (this.tasksOfSecond.length === 5) {
                 document.getElementById('divBlock').style.display = "block";
                 
@@ -333,4 +336,3 @@ let app = new Vue({
         eventBus100.$on('on-check', this.handleOnCheck100)
     }
 });
-
