@@ -305,7 +305,7 @@ let app = new Vue({
                 this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
                 this.tasksOfSecond.push(task)
                 console.log(this.tasksOfFirst);
-            } else if (this.tasksOfSecond.length === 5) {
+            } else if ((this.tasksOfSecond.length === 5) && (this.tasksOfFirst.includes(task))) {
                 document.getElementById('divBlock').style.display = 'block';
             }
             localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
