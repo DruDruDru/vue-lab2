@@ -20,8 +20,9 @@ Vue.component('column', {
         <div class="column">
             <card 
                 v-for="task in tasks" 
-                :key="task.id" 
+                :key="task.id"
                 :task="task"
+                :first-column="addTask"
                 @add-point-submitted="addToTask"
                 @on-check="moveToSecond"
             ></card>
@@ -87,6 +88,10 @@ Vue.component('card', {
             type: Object,
             required: true
         },
+        firstColumn: {
+            type: Array,
+            required: false,
+        }
     },
     data() {
         return {
@@ -102,6 +107,7 @@ Vue.component('card', {
                     type="button"
                     @click="isClick" 
                     :disabled="isDisabled"
+                    v-show="isFirstColumn"
                 >+</button>
             </div>
             
@@ -112,7 +118,7 @@ Vue.component('card', {
                     :name="point.name" 
                     class="checkboxInput"
                     v-model="point.checked"
-                    @change="onCheckbox(point)" 
+                    @change="onCheckbox(point)"
                 />
                 <label :for="point.name">{{ point.name }}</label>
             </div>
@@ -137,11 +143,8 @@ Vue.component('card', {
             }
         },
         onCheckbox(point) {
-            if (point.checked) point.checked = false; 
-            else point.checked = true;
 
             checkboxes = document.querySelectorAll('.checkboxInput')
-            console.log(checkboxes);
 
             count = 0;
             for (point of this.task.list) {
@@ -155,6 +158,13 @@ Vue.component('card', {
     computed: {
         isDisabled() {
             return this.task.list.length >= 5;
+        },
+        isFirstColumn() {
+            return this.firstColumn;
+        },
+        date() {
+            cd = new Date()
+            return 'Дата: ' + cd.getDate() + '.' + (String(cd.getMonth())+1) + '.' + cd.getFullYear() + ' Время: ' + cd.getHours() + ':' + cd.getMinutes()
         }
     },
 })
@@ -168,7 +178,7 @@ Vue.component('add-card', {
     },
     template: `
         <form @submit.prevent="onSubmit" class="createTask" v-show="isDisplayForm">
-            <input type="text" maxlength=50 required v-model="title" class="inputFortitle" />
+            <input type="text" maxlength=45 required v-model="title" class="inputFortitle" />
             <div class="poinsContainer">
                 <div>
                     <span>1.</span>

@@ -15,16 +15,19 @@
             :tasks="this.tasksOfFirst" 
             :add-task="this.tasksOfFirst"
             :can-add="this.addInFirstColumn"
+            id="firstColumn"
         ></column>
 
         <column 
             :tasks="this.tasksOfSecond" 
             :can-add="this.addInSecondColumn"
+            id="secondColumn"
         ></column>
 
         <column 
             :tasks="this.tasksOfThird" 
             :can-add="this.addInThirdColumn"
+            id="thirdColumn"
         ></column>
 
     </div>
