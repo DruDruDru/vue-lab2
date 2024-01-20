@@ -387,8 +387,6 @@ let app = new Vue({
         if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
         if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
 
-        localStorage.clear()
-
         setInterval(()=>{
             checksInSecond = document.getElementById('secondColumn').querySelectorAll('input[type="checkbox"]');
             checksInThird = document.getElementById('thirdColumn').querySelectorAll('input[type="checkbox"]');
