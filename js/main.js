@@ -51,6 +51,7 @@ Vue.component('column', {
                         { name: task.thirdPoint, checked: false }
                     ],
                     date: null,
+                    percents: 0,
                 }
                 this.addTask.push(temp)
 
@@ -113,6 +114,7 @@ Vue.component('card', {
         }
     },
     template: `
+        </div>
         <div class="card">
             <div class="titleContainer">
                 <h2>{{ task.title }}</h2>
@@ -137,6 +139,9 @@ Vue.component('card', {
             </div> 
             <div class="date-block">
                 {{ this.task.date }}
+            </div>
+            <div>
+                {{ this.task.percents + "%" }}
             </div>
             <form @submit.prevent="onAddPoint(task.id)" v-show="click" >
                 <input type="text" required v-model="point" />
@@ -163,6 +168,7 @@ Vue.component('card', {
                 if (point.checked) count++;
             }
             let percents = 100 / this.task.list.length * count
+            this.task.percents = Math.round(percents)
             if (percents >= 50 && percents < 100) eventBus50.$emit('on-check', this.task)
             if (percents === 100) eventBus100.$emit('on-check', this.task)
         }
@@ -250,7 +256,8 @@ let app = new Vue({
                     { name: 'Алгебра', checked: false },
                     { name: 'Биология', checked : false }
                 ],
-                date: null
+                date: null,
+                percents: 0,
             },
             {
                 id: 1,
@@ -260,7 +267,8 @@ let app = new Vue({
                     { name: 'Алгебра', checked: false },
                     { name: 'Биология', checked : false }
                 ],
-                date: null
+                date: null,
+                percents: 0,
             }
         ],
         tasksOfSecond: [
@@ -272,7 +280,8 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
-                date: null
+                date: null,
+                percents: 67,
             },
             {
                 id: 3,
@@ -282,7 +291,8 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
-                date: null
+                date: null,
+                percents: 67,
             }
         ],
         tasksOfThird: [
@@ -294,20 +304,25 @@ let app = new Vue({
                     { name: 'Алгебра', checked: true },
                     { name: 'Биология', checked : true }
                 ],
-                date: new Date().toDateString() + ' --- ' + new Date().toTimeString()
+                date: new Date().toDateString() + ' --- ' + new Date().toTimeString(),
+                percents: 100,
             }
         ],
     },
     methods: {
         handleOnCheck50(task) {
+
             if (this.tasksOfFirst.includes(task) && !(this.tasksOfSecond.includes(task)) && (this.tasksOfSecond.length < 5)) {
                 const idx = this.tasksOfFirst.indexOf(task)
                 this.tasksOfFirst = this.tasksOfFirst.filter((value, index) => idx !== index)
                 this.tasksOfSecond.push(task)
-                console.log(this.tasksOfFirst);
             } else if ((this.tasksOfSecond.length === 5) && (this.tasksOfFirst.includes(task))) {
                 document.getElementById('divBlock').style.display = 'block';
             }
+
+            checksInSecond = document.getElementById('secondColumn').querySelectorAll('input[type="checkbox"]');
+            checksInThird = document.getElementById('thirdColumn').querySelectorAll('input[type="checkbox"]');
+
             localStorage.setItem('tasksOfFirst', JSON.stringify(this.tasksOfFirst))
             localStorage.setItem('tasksOfSecond', JSON.stringify(this.tasksOfSecond))
             localStorage.setItem('tasksOfThird', JSON.stringify(this.tasksOfThird))
@@ -318,8 +333,10 @@ let app = new Vue({
             if (tasksOfFirst) this.tasksOfFirst = JSON.parse(tasksOfFirst);
             if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
             if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
+
         },
         handleOnCheck100(task) {
+
             if (this.tasksOfSecond.includes(task)) {
                 let flag = false;
                 if (this.tasksOfSecond.length === 5) {
@@ -370,7 +387,28 @@ let app = new Vue({
         if (tasksOfSecond) this.tasksOfSecond = JSON.parse(tasksOfSecond);
         if (tasksOfThird) this.tasksOfThird = JSON.parse(tasksOfThird);
 
+        localStorage.clear()
+
+        setInterval(()=>{
+            checksInSecond = document.getElementById('secondColumn').querySelectorAll('input[type="checkbox"]');
+            checksInThird = document.getElementById('thirdColumn').querySelectorAll('input[type="checkbox"]');
+            for (let i = 0;i < checksInSecond.length;++i) {
+                if (checksInSecond[i].checked) {
+                    checksInSecond[i].disabled = true
+                }
+            }
+            for (let i = 0;i < checksInThird.length;++i) {
+                if (checksInThird[i].checked) {
+                    checksInThird[i].disabled = true
+                }
+            }
+        }, 5)
+        
+
         eventBus50.$on('on-check', this.handleOnCheck50),
         eventBus100.$on('on-check', this.handleOnCheck100)
+    },
+    computed: {
+
     }
 });

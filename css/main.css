@@ -14,6 +14,7 @@ body {
 }
 .card {
     height: 175px;
+    transition: left 5s ease-out;
 }
 #app {
     display: flex;
@@ -50,4 +51,7 @@ body {
 #firstColumn .date-block,
 #secondColumn .date-block {
     display: none;
+}
+.card-wrap {
+    display: flex;
 }
